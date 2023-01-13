@@ -1,0 +1,33 @@
+# fastapi package
+fastapi
+uvicorn[standard]
+python-multipart
+anyio
+pydantic[email, dotenv]
+
+# Database packages
+motor
+tornado
+pymongo[srv]
+redis[hiredis]
+
+# JWT
+python-jose[cryptography]
+PyJWT
+
+# Lancher API
+websockets
+jinja2
+aiofiles
+requests
+
+# Stripe API
+stripe
+httpx
+
+# Other packages
+sslcommerz-lib
+wheel
+APScheduler
+pyclean
+pycryptodome
