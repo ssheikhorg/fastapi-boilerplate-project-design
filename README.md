@@ -1,6 +1,9 @@
 # fastapi-boilerplate-project-design
 
-## 1. Project Structure
+```Can be used as a template for Python, FastAPI, MongoDB, Redis```
+
+
+### 1. Project Structure
 
 ```bash
 ├── LICENSE
@@ -41,5 +44,3 @@
             ├── __init__.py
             └── serializers.py
 ```
-
-## Can be used as a template for Python, FastAPI, MongoDB, Redis
