@@ -1,0 +1,52 @@
+[project]
+    name = "pyproject-toml-cheat-sheet"
+    version = "1.0.0"
+    description = "A cheat sheet for pyproject.toml"
+    requires-python = ">=3.11"
+    dependencies = ["requirements.txt"]
+    classifiers = [
+        "Development Status :: 5 - Production/Stable",
+        "Environment :: Console",
+        "Intended Audience :: Developers",
+        "Operating System :: OS Independent",
+        "Programming Language :: Python :: 3",
+        "Programming Language :: Python :: 3.11",
+        "Topic :: Software Development :: Libraries :: Python Modules",
+    ]
+    dynamic = ["version"]
+
+[tool.bandit]
+    targets = ["src"]
+
+[tool.black]
+    line-length = 119
+
+[tool.pylint]
+    max-line-length = 119
+    disable = [
+        "W0703",  # Catching too general exception Exception
+        "C0103",  # Invalid-name (snake_case)
+        "E0402",  # Import-error
+        "C2801",  # dunder __str__ method error
+        "W1514",  # Using open without explicitly specifying an encoding
+        "W1203",  # log__name__warning
+        "R0914",  # Too many local variables
+        "E0611",  # No name in module
+        "R0903",  # Too few public methods
+        "C0115",  # Missing class docstring
+        "C0116",  # Missing function or method docstring
+        "C0114",  # Missing module docstring
+    ]
+    ignore = ["tests", "migrations"]
+    ignore-patterns = ["migrations", "tests", "test.*.py", "conftest.py"]
+    init-hook = "import sys; sys.path.append('src')"
+    jobs = 0
+    limit-inference-results = 100
+    persistent = "yes"
+    suggestion-mode = "yes"
+    unsafe-load-any-extension = "no"
+
+[tool.flake8]
+    max-line-length = 119
+    ignore = ["E203", "E266", "E501", "W503", "F403", "F401"]
+    exclude = [".git", "__pycache__", ".migrations", "tests"]
