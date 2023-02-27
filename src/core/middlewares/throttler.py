@@ -29,26 +29,23 @@ class ThrottleMiddleware:
         client_ip = scope["client"][0]
 
         # dynamic rate limit to be set for each endpoint
-        match scope["path"]:
-            case "/test":
-                # override global rate limit
-                rate_limit_key = "rate_limit"
-                rate_limit = await self._rate_limit_global_method(client_ip, rate_limit_key)
+        if scope["path"] == "/test":
+            # override global rate limit
+            rate_limit_key = "payout_rate_limit"
+            rate_limit = await self._rate_limit_global_method(client_ip, rate_limit_key)
 
-                if rate_limit["success"]:
-                    return await self.app(scope, receive, send)
-                else:
-                    return await block_request()(scope, receive, send)
+            if rate_limit["success"]:
+                return await self.app(scope, receive, send)
+            else:
+                return await block_request()(scope, receive, send)
+        else:
+            rate_limit = await self._rate_limit_global_method(client_ip, rate_limit_key)
+            if rate_limit["success"]:
+                return await self.app(scope, receive, send)
+            else:
+                return await block_request()(scope, receive, send)
 
-            case _:
-                rate_limit = await self._rate_limit_global_method(client_ip, rate_limit_key)
-
-                if rate_limit["success"]:
-                    return await self.app(scope, receive, send)
-                else:
-                    return await block_request()(scope, receive, send)
-
-    async def _rate_limit_global_method(self, client_ip: str, rl_key: str):
+    async def _rate_limit_global_method(self, client_ip: str, rl_key: str) -> dict:
         """Rate limit global method."""
         default_rate_limit = "20"
         default_expiry = 60
@@ -78,11 +75,13 @@ class ThrottleMiddleware:
 def block_request() -> ASGIApp:
     """Block request."""
 
-    async def request_limit_error(scope: Scope, receive: Receive, send: Send) -> None:
+    async def request_limit_error(scope: Scope, receive: Receive, send: Send) -> None:  # noqa: W0613
         await send({"type": "http.response.start", "status": 429, "headers": [[b"content-type", b"application/json"]]})
-        await send({
-            "type": "http.response.body",
-            "body": b'{"msg": "Too many requests, please try later.", "statusCode": 429}'
-        })
+        await send(
+            {
+                "type": "http.response.body",
+                "body": b'{"msg": "Too many requests, please try later.", "statusCode": 429}',
+            }
+        )
 
     return request_limit_error

@@ -12,18 +12,17 @@ class AuthBearer(HTTPBearer):
     def __init__(self, auto_error: bool = True):
         self.secret = c.jwt_secret
         self.algorithm = c.jwt_algorithm
-        super(AuthBearer, self).__init__(auto_error=auto_error)
+        super().__init__(auto_error=auto_error)
 
-    async def __call__(self, request: Request) -> str:
-        credentials: HTTPAuthorizationCredentials = await super().__call__(request)
+    async def __call__(self, request: Request) -> Any:
+        credentials: HTTPAuthorizationCredentials | None = await super().__call__(request)
         if credentials:
             if not credentials.scheme == "Bearer":
                 raise HTTPException(status_code=403, detail="Invalid authentication scheme")
             if not self.verify_jwt(credentials.credentials):
                 raise HTTPException(status_code=403, detail="Invalid token or expired token.")
             return credentials.credentials
-        else:
-            raise HTTPException(status_code=403, detail="Invalid authorization code.")
+        raise HTTPException(status_code=403, detail="Invalid authorization code.")
 
     def verify_jwt(self, token: str) -> bool:
         try:
@@ -31,6 +30,7 @@ class AuthBearer(HTTPBearer):
             if decoded_token:
                 is_token_valid = True
                 return is_token_valid
+            return False
         except Exception as e:
             raise e
 
@@ -42,3 +42,8 @@ class AuthBearer(HTTPBearer):
             return None
         except Exception as e:
             return Rs.server_error(e.__str__())
+
+
+async def decode_xero_tokens(token: str) -> dict:
+    """Decodes the xero tokens"""
+    return jwt.decode(token, algorithms=["RS256"], options={"verify_signature": False})
