@@ -20,3 +20,7 @@ backend = Redis(
     db=1,
     decode_responses=True,
 )
+
+"""Redis Server Connection"""
+broker_url = f"redis://{c.REDIS_USERNAME}:{c.REDIS_PASSWORD}@{c.REDIS_HOST}:{c.REDIS_PORT}/0"
+backend_url = f"redis://{c.REDIS_USERNAME}:{c.REDIS_PASSWORD}@{c.REDIS_HOST}:{c.REDIS_PORT}/1"
