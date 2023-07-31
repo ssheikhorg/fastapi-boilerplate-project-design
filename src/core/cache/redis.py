@@ -1,15 +1,22 @@
-from dramatiq.brokers.redis import RedisBroker
-from redis import from_url
+from redis import from_url, Redis
+from src import settings as c
 
+"""Redis Server Connection"""
 
-"""Redis Cloud Connection"""
-data = dict(
-    host="localhost",
-    port=14227,
-    username="default",
-    password="default"
+broker = Redis(
+    host=c.REDIS_HOST,
+    port=c.REDIS_PORT,
+    username=c.REDIS_USERNAME,
+    password=c.REDIS_PASSWORD,
+    db=0,
+    decode_responses=True,
 )
-redis = from_url(url=f"redis://{data['username']}:{data['password']}@{data['host']}:{data['port']}", decode_responses=True)
 
-
-redis_broker = RedisBroker(url=f"redis://{data['username']}:{data['password']}@{data['host']}:{data['port']}")
+backend = Redis(
+    host=c.REDIS_HOST,
+    port=c.REDIS_PORT,
+    username=c.REDIS_USERNAME,
+    password=c.REDIS_PASSWORD,
+    db=1,
+    decode_responses=True,
+)
